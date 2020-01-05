@@ -3,71 +3,57 @@ package com.mavenits.bnk;
 
 import com.mavenits.bnk.db.DBConnector;
 import com.mavenits.bnk.model.Customer;
+import com.mavenits.bnk.model.Transactions;
+import com.mavenits.bnk.services.CreateCustomer;
+import com.mavenits.bnk.services.CreateTransactions;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Properties;
 
 public class Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
-        // read data from customer
-        Customer customer1 = new Customer();
-        customer1.setFirstName("ayyappa");
-        customer1.setLastName("Garla");
-        customer1.setDob("29-06-1982");
-        customer1.setId(1L);
-        customer1.setPostcode("E61JG");
-        customer1.setCreateDated(LocalDate.now().minusDays(20));
+        Properties properties = new Properties();
+        FileInputStream fs = new FileInputStream(String.valueOf(new URL("/Users/maheshreddy/Desktop/" +
+                "/bnk/src/com/mavenits/bnkkjghjkg/security.properites")));
+        properties.load(fs);
 
-        // read data from customer
-        Customer customer2 = new Customer();
-        customer2.setFirstName("rk");
-        customer2.setLastName("redd");
-        customer2.setDob("29-06-1982");
-        customer2.setId(2L);
-        customer2.setPostcode("E61JG");
-        customer2.setCreateDated(LocalDate.now());
 
-        //Customer1 store in db (cusomterstore)
+        String authID = properties.get("authid").toString();
+        if (!authID.equals("dsjhflke4984lkdfsvdf")) {
+            throw new RuntimeException("Unauthosized access .");
+        }
 
-        DBConnector db =new DBConnector();
-        db.save(customer1);
-        db.save(customer2);
+        //Accounts
+        new CreateCustomer().create();
+        String dob = "29-06-1982";
+        String lastname = "Garla";
+
+        DBConnector db = new DBConnector();
+
+        List<Customer> resultsSet =
+                db.getCustomer(dob, lastname);
+
+        if (resultsSet.size() == 0) {
+            throw new RuntimeException("No Customer found with details. " + dob + lastname);
+        }
+//       db.deleteCustomer(lastname);
+
+
+        //Transactions
+        CreateTransactions transactions = new CreateTransactions();
+        transactions.create();
+        transactions.isAccountExists(db);
+        transactions.isUserGotEnoughMoney();
+
+        db.save(transactions);
+        System.out.println();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-////        Set<Double> list = new HashSet<>();
-////
-////        list.add(34455.00);
-////        list.add(3783.00);
-////        list.add(8768.00);
-////        list.add(8768.00);
-////
-////
-////        System.out.println("*******");
-////        System.out.println(list);
-//
-//
-//        Map<String, String> map = new HashMap<>();
-//        map.put("name", "rk");
-//        map.put("age", "29");
-//        map.put("salart", "33333");
-//
-//        System.out.println("Map is " + map);
-//
-//        System.out.println("age is " + map.get("age"));
-
-//    }
-//            }

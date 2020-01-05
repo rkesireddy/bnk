@@ -20,7 +20,7 @@ public class Customer {
 
 
     public Customer() {
-        this.balance = 100.00;
+        this.balance = 1.00;
     }
 
     public long getId() {
